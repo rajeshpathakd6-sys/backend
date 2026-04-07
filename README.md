@@ -29,3 +29,43 @@ This is the backend for my Personal Digital Space website. It handles form submi
 ---
 
 ## 📁 Project Structure
+
+backend/
+├── config/
+├── controllers/
+├── models/
+├── routes/
+├── uploads/
+├── server.js
+├── package.json
+├── .env
+
+
+---
+
+## 📡 API Endpoints
+
+### Newsletter POST /api/newsletter
+
+### Contact POST /api/contact
+
+### Work With Us POST /api/work-with-us
+
+### Admin (View all data) GET /api/admin/data
+
+
+---
+
+## ✨ Future Improvements
+
+- Email notifications (Nodemailer)
+- Authentication for admin dashboard
+- Cloud storage for resumes (AWS S3)
+- Rate limiting and spam protection
+
+---
+
+## 👤 Author
+
+Rajesh Pathak
+
