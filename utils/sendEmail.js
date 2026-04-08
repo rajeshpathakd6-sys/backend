@@ -18,7 +18,7 @@ async function sendWelcomeEmail(toEmail, unsubscribeToken) {
   const unsubscribeUrl = `${process.env.BASE_URL}/api/newsletter/unsubscribe/${unsubscribeToken}`;
 
   const mailOptions = {
-    from: `"AdiRaj – Routes & Reflections" <${process.env.EMAIL_USER}>`,
+    from: `"AdiRaj- Routes & Reflections" <${process.env.EMAIL_USER}>`,
     to: toEmail,
     subject: "Welcome to Routes & Reflections by AdiRaj ❤️",
     text: `
@@ -67,7 +67,8 @@ To unsubscribe: ${unsubscribeUrl}
           <tr><td style="height:6px;background:linear-gradient(90deg,#a08060,#c4a882,#a08060);"></td></tr>
           <tr>
             <td style="padding:48px 48px 36px;">
-              <p style="margin:0 0 24px;font-size:22px;font-weight:normal;color:#1a1a1a;line-height:1.4;">Hi, We're Aditi and Rajesh,</p>
+              <p style="margin:0 0 24px;font-size:22px;font-weight:normal;color:#1a1a1a;line-height:1.4;">Hi</p>
+              <p style="margin:0 0 24px;font-size:22px;font-weight:normal;color:#1a1a1a;line-height:1.4;">We're Aditi and Rajesh,</p>
               <p style="margin:0 0 20px;font-size:15px;color:#4a4a4a;line-height:1.8;">We're so glad you're here. You've offically made it to our community and we're are so happy you're here!!!</p>
               <p style="margin:0 0 20px;font-size:15px;color:#4a4a4a;line-height:1.8;">This is more than travel for us.</p>
               <p style="margin:0 0 20px;font-size:15px;color:#4a4a4a;line-height:1.8;">It’s about how we live, what we create, and what we experience- and now we’re sharing it with you.</p>
@@ -92,16 +93,14 @@ To unsubscribe: ${unsubscribeUrl}
             <td style="padding:0 48px 40px;">
               <p style="margin:32px 0 4px;font-size:15px;color:#1a1a1a;">We're just getting started.</p>
               <p style="margin:0;font-size:17px;font-style:italic;color:#a08060;">Aditi & Rajesh ❤️</p>
-              <div style="font-size:26px;color:#1a1a1a;margin-top:6px;font-weight:500;">
-<img src="./assets/logo.png" width="120">
-</div>
+              
             </td>
           </tr>
           <tr><td style="height:1px;background-color:#e8e0d5;"></td></tr>
           <tr>
             <td style="padding:24px 48px;text-align:center;">
               <p style="margin:0;font-size:11px;color:#aaa;line-height:1.8;">
-                You're receiving this because you subscribed at adiraj.com.<br/>
+                You're receiving this because you subscribed at routesandreflections.adiraj<br/>
                 <a href="${unsubscribeUrl}" style="color:#a08060;text-decoration:underline;">Unsubscribe</a>
               </p>
             </td>
