@@ -4,7 +4,6 @@ exports.subscribe = async (req, res) => {
   try {
     const { email } = req.body;
 
-    // validation
     if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
       return res.status(400).json({
         success: false,
@@ -12,17 +11,15 @@ exports.subscribe = async (req, res) => {
       });
     }
 
-    // check existing
     const exists = await Newsletter.findOne({ email });
 
     if (exists) {
-      return res.status(200).json({
-        success: true,
-        message: "Already subscribed",
+      return res.status(400).json({
+        success: false,
+        message: "Email already subscribed",
       });
     }
 
-    // create
     await Newsletter.create({ email });
 
     return res.status(201).json({
@@ -32,11 +29,10 @@ exports.subscribe = async (req, res) => {
   } catch (err) {
     console.error("Newsletter Error:", err.message);
 
-    // handle duplicate key error (extra safety)
     if (err.code === 11000) {
-      return res.status(200).json({
-        success: true,
-        message: "Already subscribed",
+      return res.status(400).json({
+        success: false,
+        message: "Email already subscribed",
       });
     }
 
