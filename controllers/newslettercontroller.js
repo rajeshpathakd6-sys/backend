@@ -1,5 +1,11 @@
 const Newsletter = require("../models/newsletter");
-const { sendWelcomeEmail } = require("../utils/sendEmail");
+let sendWelcomeEmail;
+
+try {
+  ({ sendWelcomeEmail } = require("../utils/sendEmail"));
+} catch (err) {
+  console.error("Email module failed to load:", err.message);
+}
 
 // POST /api/newsletter
 exports.subscribe = async (req, res) => {
@@ -22,7 +28,9 @@ exports.subscribe = async (req, res) => {
         existing.isSubscribed = true;
         await existing.save();
 
-        await sendWelcomeEmail(existing.email, existing.unsubscribeToken);
+        if (sendWelcomeEmail) {
+          await sendWelcomeEmail(existing.email, existing.unsubscribeToken);
+        }
 
         return res.status(200).json({
           success: true,
@@ -39,9 +47,11 @@ exports.subscribe = async (req, res) => {
     const subscriber = await Newsletter.create({ email });
 
     // Fire welcome email — non-blocking: log error but don't fail the request
-    sendWelcomeEmail(subscriber.email, subscriber.unsubscribeToken).catch(
-      (err) => console.error("Welcome email failed:", err.message),
-    );
+    if (sendWelcomeEmail) {
+      sendWelcomeEmail(subscriber.email, subscriber.unsubscribeToken).catch(
+        (err) => console.error("Welcome email failed:", err.message),
+      );
+    }
 
     return res.status(201).json({
       success: true,

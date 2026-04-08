@@ -1,13 +1,26 @@
 const nodemailer = require("nodemailer");
 
 // Transporter is created once and reused for all emails
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_USER, // your Gmail address
-    pass: process.env.EMAIL_PASS, // 16-character App Password (NOT your Gmail login password)
-  },
-});
+let transporter;
+
+function getTransporter() {
+  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+    console.error("Email config missing");
+    return null;
+  }
+
+  if (!transporter) {
+    transporter = require("nodemailer").createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+  }
+
+  return transporter;
+}
 
 /**
  * Sends a branded welcome email to a new newsletter subscriber.
@@ -114,6 +127,13 @@ To unsubscribe: ${unsubscribeUrl}
   };
 
   try {
+    const transporter = getTransporter();
+
+    if (!transporter) {
+      console.log("Skipping email (no config)");
+      return;
+    }
+
     const info = await transporter.sendMail(mailOptions);
     console.log("✅ Email sent:", info.response);
   } catch (error) {
