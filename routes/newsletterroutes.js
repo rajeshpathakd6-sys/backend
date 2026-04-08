@@ -1,6 +1,10 @@
 const router = require("express").Router();
-const { subscribe } = require("../controllers/newslettercontroller");
+const {
+  subscribe,
+  unsubscribe,
+} = require("../controllers/newslettercontroller");
 
 router.post("/", subscribe);
+router.get("/unsubscribe/:token", unsubscribe);
 
 module.exports = router;
