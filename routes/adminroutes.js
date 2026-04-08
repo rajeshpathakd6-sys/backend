@@ -1,24 +1,28 @@
 const router = require("express").Router();
 
-const Newsletter = require("../models/newsletter");
+const express = require("express");
+const router = express.Router();
+
 const Contact = require("../models/contactus");
+const Newsletter = require("../models/newsletter");
 const Work = require("../models/workwithus");
 
-// GET ALL DATA
-router.get("/data", async (req, res) => {
-  try {
-    const newsletters = await Newsletter.find().sort({ createdAt: -1 });
-    const contacts = await Contact.find().sort({ createdAt: -1 });
-    const works = await Work.find().sort({ createdAt: -1 });
+// GET all contacts
+router.get("/contacts", async (req, res) => {
+  const data = await Contact.find().sort({ createdAt: -1 });
+  res.json(data);
+});
 
-    res.json({
-      newsletters,
-      contacts,
-      works,
-    });
-  } catch (err) {
-    res.status(500).json({ error: "Server error" });
-  }
+// GET all newsletters
+router.get("/newsletters", async (req, res) => {
+  const data = await Newsletter.find().sort({ createdAt: -1 });
+  res.json(data);
+});
+
+// GET all work submissions
+router.get("/works", async (req, res) => {
+  const data = await Work.find().sort({ createdAt: -1 });
+  res.json(data);
 });
 
 module.exports = router;
