@@ -1,18 +1,30 @@
 const Contact = require("../models/contactus");
 
 exports.submitContact = async (req, res) => {
-  const { name, email, message } = req.body;
-
-  if (!name || !email || !message) {
-    return res.status(400).json({ error: "All fields required" });
-  }
-
   try {
+    const { name, email, message } = req.body;
+
+    // validation
+    if (!name || !email || !message) {
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required",
+      });
+    }
+
+    // create entry
     await Contact.create({ name, email, message });
 
-    res.json({ message: "Message sent successfully" });
+    return res.status(201).json({
+      success: true,
+      message: "Message sent successfully",
+    });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Server error" });
+    console.error("Contact Error:", err.message);
+
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
   }
 };
