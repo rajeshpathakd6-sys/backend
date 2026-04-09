@@ -22,12 +22,12 @@ async function sendWelcomeEmail(toEmail, unsubscribeToken) {
 
   const siteUrl = process.env.BASE_URL || "https://routesandreflections.in";
   const logoUrl =
-    "https://rajeshpathakd6-sys.github.io/personaldigital-space/assets/logo.png";
+    "https://rajeshpathakd6-sys.github.io/personaldigital-space/assets/logo-white.png";
   const unsubscribeUrl = `${siteUrl}/api/newsletter/unsubscribe/${unsubscribeToken}`;
 
   try {
     const { data, error } = await resend.emails.send({
-      from: "AdiRaj — Routes & Reflections <hello@routesandreflections.in>", // use this until domain verified
+      from: "AdiRaj- Routes & Reflections <adiraj@routesandreflections.in>", // use this until domain verified
       to: toEmail,
       subject: "Welcome to Routes & Reflections ✦",
 
