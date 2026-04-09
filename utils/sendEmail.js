@@ -1,62 +1,37 @@
-const nodemailer = require("nodemailer");
+const { Resend } = require("resend");
 
-let transporter;
-
-function getTransporter() {
-  const user = process.env.BREVO_USER;
-  const pass = process.env.BREVO_PASS;
-
-  if (!user || !pass) {
-    console.error("❌ BREVO CONFIG ERROR");
-    console.error(`   BREVO_USER: ${user ? "✅ set" : "❌ missing"}`);
-    console.error(`   BREVO_PASS: ${pass ? "✅ set" : "❌ missing"}`);
-    return null;
-  }
-
-  if (!transporter) {
-    console.log("🔧 Creating Brevo transporter...");
-    transporter = nodemailer.createTransport({
-      host: "smtp-relay.brevo.com",
-      port: 587,
-      secure: false,
-      auth: { user, pass },
-    });
-  }
-
-  return transporter;
-}
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 async function verifyTransporter() {
-  console.log("🔍 Verifying Brevo transporter...");
-  const t = getTransporter();
-  if (!t) return false;
-
-  try {
-    await t.verify();
-    console.log("✅ Brevo SMTP connection verified successfully");
-    return true;
-  } catch (err) {
-    console.error("❌ Brevo SMTP verification failed:", err.message);
-    transporter = null;
+  if (!process.env.RESEND_API_KEY) {
+    console.error("❌ RESEND_API_KEY missing from environment");
     return false;
   }
+  console.log("✅ Resend API key found — ready to send emails");
+  return true;
 }
 
 async function sendWelcomeEmail(toEmail, unsubscribeToken) {
   console.log("\n🚀 ===== sendWelcomeEmail START =====");
   console.log("📧 Recipient:", toEmail);
 
+  if (!process.env.RESEND_API_KEY) {
+    console.error("❌ RESEND_API_KEY missing");
+    throw new Error("RESEND_API_KEY not set");
+  }
+
   const siteUrl = process.env.BASE_URL || "https://routesandreflections.in";
   const logoUrl =
     "https://rajeshpathakd6-sys.github.io/personaldigital-space/assets/logo.png";
   const unsubscribeUrl = `${siteUrl}/api/newsletter/unsubscribe/${unsubscribeToken}`;
 
-  const mailOptions = {
-    from: `"AdiRaj- Routes & Reflections" <routesandreflections.adiraj@gmail.com>`,
-    to: toEmail,
-    subject: "You're in — Welcome to Routes & Reflections ✦",
+  try {
+    const { data, error } = await resend.emails.send({
+      from: "AdiRaj — Routes & Reflections <hello@routesandreflections.in>", // use this until domain verified
+      to: toEmail,
+      subject: "Welcome to Routes & Reflections ✦",
 
-    text: `
+      text: `
 Hi,
 
 We're Aditi and Rajesh — and we're so glad you found us.
@@ -80,9 +55,9 @@ AdiRaj — Routes & Reflections
 —
 You're receiving this because you subscribed at routesandreflections.in
 To unsubscribe: ${unsubscribeUrl}
-    `.trim(),
+      `.trim(),
 
-    html: `<!DOCTYPE html>
+      html: `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
@@ -202,29 +177,22 @@ To unsubscribe: ${unsubscribeUrl}
 </table>
 </body>
 </html>`,
-  };
+    });
 
-  const maxRetries = 2;
-  for (let attempt = 1; attempt <= maxRetries; attempt++) {
-    try {
-      console.log(`📨 Attempt ${attempt}: Sending email...`);
-      const t = getTransporter();
-      if (!t) throw new Error("Transporter unavailable");
-
-      const info = await t.sendMail(mailOptions);
-      console.log("✅ EMAIL SENT SUCCESSFULLY via Brevo");
-      console.log("📬 Message ID:", info.messageId);
-      console.log("🚀 ===== sendWelcomeEmail END =====\n");
-      return { success: true, messageId: info.messageId };
-    } catch (error) {
-      console.error(`❌ Attempt ${attempt} FAILED:`, error.message);
-      if (attempt === maxRetries) {
-        console.log("🚀 ===== sendWelcomeEmail END (FAILED) =====\n");
-        throw error;
-      }
-      console.log("🔁 Retrying in 2 seconds...");
-      await new Promise((res) => setTimeout(res, 2000));
+    if (error) {
+      console.error("❌ Resend API error:", error);
+      throw new Error(error.message);
     }
+
+    console.log("✅ EMAIL SENT SUCCESSFULLY via Resend");
+    console.log("📬 Email ID:", data.id);
+    console.log("🚀 ===== sendWelcomeEmail END =====\n");
+
+    return { success: true, emailId: data.id };
+  } catch (err) {
+    console.error("❌ sendWelcomeEmail FAILED:", err.message);
+    console.log("🚀 ===== sendWelcomeEmail END (FAILED) =====\n");
+    throw err;
   }
 }
 
