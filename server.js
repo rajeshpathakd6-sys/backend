@@ -12,7 +12,17 @@ const app = express();
 connectDB();
 
 // Middleware
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "https://www.routesandreflections.in",
+      "https://routesandreflections.in",
+    ],
+    methods: ["GET", "POST"],
+    credentials: true,
+  }),
+);
+
 app.use(express.json());
 
 // Routes
