@@ -25,6 +25,8 @@ function getTransporter() {
       secure: true,
       auth: { user, pass },
 
+      family: 4, // FORCE IPv4 (THIS FIXES YOUR ISSUE)
+
       // Important for Render / cloud environments
       tls: {
         rejectUnauthorized: true,
