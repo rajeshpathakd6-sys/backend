@@ -17,6 +17,8 @@ app.use(
     origin: [
       "https://www.routesandreflections.in",
       "https://routesandreflections.in",
+      "http://localhost:5500", // or whatever port your frontend runs on
+      "http://127.0.0.1:5500",
     ],
     methods: ["GET", "POST"],
     credentials: true,
